@@ -27,7 +27,7 @@ export default function Post({
   createdAt,
 }: PostContent): JSX.Element {
   return (
-    <Layout>
+    <Layout title={title}>
       <article>
         <header>
           <time dateTime={createdAt}>
