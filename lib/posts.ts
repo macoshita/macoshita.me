@@ -1,4 +1,4 @@
-import fs from "fs/promises";
+import FS from "fs";
 import matter from "gray-matter";
 import path from "path";
 import unified from "unified";
@@ -9,6 +9,8 @@ import gfm from "remark-gfm";
 import remark2rehype from "remark-rehype";
 import rehypePrism from "@mapbox/rehype-prism";
 import html from "rehype-stringify";
+
+const fs = FS.promises;
 
 const processor = unified()
   .use(parse)
