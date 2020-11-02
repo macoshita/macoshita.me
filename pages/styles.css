@@ -1,0 +1,39 @@
+@import url(sanitize.css);
+
+:root {
+  --rich-black-fogra-29: #0d1b2aff;
+  --oxford-blue: #1b263bff;
+  --bdazzled-blue: #415a77ff;
+  --shadow-blue: #778da9ff;
+  --platinum: #e0e1ddff;
+
+  --color-background: var(--platinum);
+  --color-text: var(--rich-black-fogra-29);
+  --color-sub-text: var(--bdazzled-blue);
+  --color-link: var(--bdazzled-blue);
+  --color-title: var(--rich-black-fogra-29);
+
+  --width-main: 800px;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
