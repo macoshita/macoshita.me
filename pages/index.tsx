@@ -1,22 +1,18 @@
-import Head from "next/head";
 import Layout from "@/components/layout";
 import { GetStaticProps } from "next";
-import { listPostContent, PostContent } from "@/lib/posts";
+import { fetchPosts, PostContent } from "@/lib/posts";
 import Link from "next/link";
 import { format } from "date-fns";
 
+type Post = Pick<PostContent, "slug" | "title" | "createdAt">;
+
 type Props = {
-  posts: PostContent[];
+  posts: Post[];
 };
 
 export default function Home({ posts }: Props): JSX.Element {
   return (
     <Layout home>
-      <Head>
-        <title>@macoshita</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <div className="posts">
         {posts.map(({ slug, title, createdAt }, i) => (
           <div key={i} className="post">
@@ -53,10 +49,14 @@ export default function Home({ posts }: Props): JSX.Element {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const posts = listPostContent(1, 5);
+  const posts = await fetchPosts();
   return {
     props: {
-      posts,
+      posts: posts.map((post) => ({
+        slug: post.slug,
+        title: post.title,
+        createdAt: post.createdAt,
+      })),
     },
   };
 };

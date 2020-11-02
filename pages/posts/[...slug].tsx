@@ -1,25 +1,8 @@
 import Layout from "@/components/layout";
-import { fetchPosts, PostContent } from "@/lib/posts";
+import { fetchPosts, getPost, PostContent } from "@/lib/posts";
 import { format } from "date-fns";
 import { GetStaticPaths, GetStaticProps } from "next";
-import ReactMarkdownWithHtml from "react-markdown/with-html";
-import breaks from "remark-breaks";
-import emoji from "remark-emoji";
-import gfm from "remark-gfm";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { okaidia } from "react-syntax-highlighter/dist/cjs/styles/prism";
-
-const code = ({ language, value }) => {
-  return (
-    <SyntaxHighlighter style={okaidia} language={language}>
-      {value}
-    </SyntaxHighlighter>
-  );
-};
-
-const renderers = {
-  code,
-};
+import "prism-themes/themes/prism-a11y-dark.css";
 
 export default function Post({
   content,
@@ -35,15 +18,7 @@ export default function Post({
           </time>
           <h1 className="title">{title}</h1>
         </header>
-        <section>
-          <ReactMarkdownWithHtml
-            plugins={[gfm, breaks, emoji]}
-            renderers={renderers}
-            allowDangerousHtml
-          >
-            {content}
-          </ReactMarkdownWithHtml>
-        </section>
+        <section dangerouslySetInnerHTML={{ __html: content }} />
       </article>
       <style jsx>{`
         article {
@@ -72,8 +47,9 @@ export default function Post({
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await fetchPosts();
   return {
-    paths: fetchPosts().posts.map((post) => `/posts/${post.slug}`),
+    paths: posts.map((post) => `/posts/${post.slug}`),
     fallback: false,
   };
 };
@@ -84,6 +60,6 @@ export const getStaticProps: GetStaticProps<PostContent> = async ({
   const slug =
     typeof params.slug === "string" ? params.slug : params.slug.join("/");
   return {
-    props: fetchPosts().postMap[slug],
+    props: await getPost(slug),
   };
 };

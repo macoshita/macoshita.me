@@ -1,6 +1,23 @@
-import fs from "fs";
+import fs from "fs/promises";
 import matter from "gray-matter";
 import path from "path";
+import unified from "unified";
+import parse from "remark-parse";
+import breaks from "remark-breaks";
+import emoji from "remark-emoji";
+import gfm from "remark-gfm";
+import remark2rehype from "remark-rehype";
+import rehypePrism from "@mapbox/rehype-prism";
+import html from "rehype-stringify";
+
+const processor = unified()
+  .use(parse)
+  .use(gfm)
+  .use(breaks)
+  .use(emoji)
+  .use(remark2rehype)
+  .use(rehypePrism)
+  .use(html);
 
 const postsDirectory = path.join(process.cwd(), "posts");
 
@@ -24,30 +41,23 @@ export type PostContent = {
   readonly id: number;
 };
 
-export type PostMap = {
-  [slug: string]: PostContent;
-};
+let postsCache: PostContent[];
 
-let postCache: PostContent[];
-let postMapCache: PostMap;
-
-export function fetchPosts(): { posts: PostContent[]; postMap: PostMap } {
-  if (postCache && postMapCache) {
-    return { posts: postCache, postMap: postMapCache };
+export async function fetchPosts(): Promise<PostContent[]> {
+  if (postsCache) {
+    return postsCache;
   }
 
-  const fileNames = fs.readdirSync(postsDirectory);
+  const fileNames = await fs.readdir(postsDirectory);
 
-  postCache = fileNames
+  const jobs = fileNames
     .filter((it) => it.endsWith(".md"))
-    .map((fileName) => {
+    .map(async (fileName) => {
       const fullPath = path.join(postsDirectory, fileName);
-      const fileContents = fs.readFileSync(fullPath, "utf8");
+      const fileContents = await fs.readFile(fullPath, "utf8");
 
-      const { content, data } = (matter(fileContents) as unknown) as {
-        content: string;
-        data: EsaFrontMatter;
-      };
+      const { content: markdown, data } = matter(fileContents);
+      const { contents } = await processor.process(markdown);
 
       return {
         slug: data.category,
@@ -55,36 +65,24 @@ export function fetchPosts(): { posts: PostContent[]; postMap: PostMap } {
         tags: data.tags?.split(",")?.map((t) => t.trim()) ?? [],
         createdAt: new Date(data.created_at).toISOString(),
         updatedAt: new Date(data.updated_at).toISOString(),
-        content,
+        content: contents,
       } as PostContent;
-    })
-    .sort((a, b) => {
-      if (a.createdAt < b.createdAt) {
-        return 1;
-      } else {
-        return -1;
-      }
     });
 
-  postMapCache = {};
-  postCache.forEach((post) => {
-    postMapCache[post.slug] = post;
+  const posts = await Promise.all(jobs);
+
+  postsCache = posts.sort((a, b) => {
+    if (a.createdAt < b.createdAt) {
+      return 1;
+    } else {
+      return -1;
+    }
   });
 
-  return { posts: postCache, postMap: postMapCache };
+  return postsCache;
 }
 
-export function countPosts(tag?: string): number {
-  return fetchPosts().posts.filter((it) => !tag || it.tags?.includes(tag))
-    .length;
-}
-
-export function listPostContent(
-  page: number,
-  limit: number,
-  tag?: string
-): PostContent[] {
-  return fetchPosts()
-    .posts.filter((post) => !tag || post.tags?.includes(tag))
-    .slice((page - 1) * limit, page * limit);
+export async function getPost(slug: string): Promise<PostContent> {
+  const posts = await fetchPosts();
+  return posts.find((post) => post.slug === slug);
 }
