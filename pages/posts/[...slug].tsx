@@ -1,14 +1,10 @@
 import Layout from "@/components/layout";
-import { fetchPosts, getPost, PostContent } from "@/lib/posts";
+import { fetchPostInfo, getPost, PostContent } from "@/lib/posts";
 import { format } from "date-fns";
 import { GetStaticPaths, GetStaticProps } from "next";
-import "prism-themes/themes/prism-a11y-dark.css";
 
-export default function Post({
-  content,
-  title,
-  createdAt,
-}: PostContent): JSX.Element {
+export default function Post({ content, info }: PostContent): JSX.Element {
+  const { title, createdAt } = info;
   return (
     <Layout title={title}>
       <article>
@@ -47,7 +43,7 @@ export default function Post({
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const posts = await fetchPosts();
+  const posts = await fetchPostInfo();
   return {
     paths: posts.map((post) => `/posts/${post.slug}`),
     fallback: false,
