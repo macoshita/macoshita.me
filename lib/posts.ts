@@ -1,29 +1,12 @@
 import FS from "fs";
-import matter from "gray-matter";
 import path from "path";
-import unified from "unified";
-import parse from "remark-parse";
-import breaks from "remark-breaks";
-import emoji from "remark-emoji";
-import gfm from "remark-gfm";
-import remark2rehype from "remark-rehype";
-import rehypePrism from "@mapbox/rehype-prism";
-import html from "rehype-stringify";
+import wfm from "@macoshita/wasm-frontmatter-markdown";
 
 const fs = FS.promises;
 
-const processor = unified()
-  .use(parse)
-  .use(gfm)
-  .use(breaks)
-  .use(emoji)
-  .use(remark2rehype)
-  .use(rehypePrism)
-  .use(html);
-
 const postsDirectory = path.join(process.cwd(), "posts");
 
-export type EsaFrontMatter = {
+export type EsaFrontmatter = {
   readonly title: string;
   readonly category: string;
   readonly tags: string | undefined;
@@ -33,19 +16,24 @@ export type EsaFrontMatter = {
   readonly number: number;
 };
 
-export type PostContent = {
+export type PostInfo = {
+  readonly filePath: string;
   readonly slug: string;
   readonly title: string;
   readonly tags: string[];
   readonly createdAt: string;
   readonly updatedAt: string;
-  readonly content: string;
   readonly id: number;
 };
 
-let postsCache: PostContent[];
+export type PostContent = {
+  info: PostInfo;
+  content: string;
+};
 
-export async function fetchPosts(): Promise<PostContent[]> {
+let postsCache: PostInfo[];
+
+export async function fetchPostInfo(): Promise<PostInfo[]> {
   if (postsCache) {
     return postsCache;
   }
@@ -55,20 +43,22 @@ export async function fetchPosts(): Promise<PostContent[]> {
   const jobs = fileNames
     .filter((it) => it.endsWith(".md"))
     .map(async (fileName) => {
-      const fullPath = path.join(postsDirectory, fileName);
-      const fileContents = await fs.readFile(fullPath, "utf8");
-
-      const { content: markdown, data } = matter(fileContents);
-      const { contents } = await processor.process(markdown);
+      const filePath = path.join(postsDirectory, fileName);
+      const fileContent = await fs.readFile(filePath, "utf8");
+      const frontmatter: EsaFrontmatter = wfm.parse(fileContent, {
+        frontmatter: true,
+        content: false,
+      }).frontmatter;
 
       return {
-        slug: data.category,
-        title: data.title,
-        tags: data.tags?.split(",")?.map((t) => t.trim()) ?? [],
-        createdAt: new Date(data.created_at).toISOString(),
-        updatedAt: new Date(data.updated_at).toISOString(),
-        content: contents,
-      } as PostContent;
+        filePath,
+        slug: frontmatter.category,
+        title: frontmatter.title,
+        tags: frontmatter.tags?.split(",")?.map((t) => t.trim()) ?? [],
+        createdAt: new Date(frontmatter.created_at).toISOString(),
+        updatedAt: new Date(frontmatter.updated_at).toISOString(),
+        id: frontmatter.number,
+      };
     });
 
   const posts = await Promise.all(jobs);
@@ -85,6 +75,16 @@ export async function fetchPosts(): Promise<PostContent[]> {
 }
 
 export async function getPost(slug: string): Promise<PostContent> {
-  const posts = await fetchPosts();
-  return posts.find((post) => post.slug === slug);
+  const posts = await fetchPostInfo();
+  const info = posts.find((post) => post.slug === slug);
+  if (!info) {
+    throw Error("file not found");
+  }
+
+  const fileContent = await fs.readFile(info.filePath, "utf8");
+  return {
+    info,
+    content: wfm.parse(fileContent, { frontmatter: false, content: true })
+      .content,
+  };
 }

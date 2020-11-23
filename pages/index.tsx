@@ -1,10 +1,10 @@
 import Layout from "@/components/layout";
 import { GetStaticProps } from "next";
-import { fetchPosts, PostContent } from "@/lib/posts";
+import { fetchPostInfo, PostInfo } from "@/lib/posts";
 import Link from "next/link";
 import { format } from "date-fns";
 
-type Post = Pick<PostContent, "slug" | "title" | "createdAt">;
+type Post = Pick<PostInfo, "slug" | "title" | "createdAt">;
 
 type Props = {
   posts: Post[];
@@ -49,7 +49,7 @@ export default function Home({ posts }: Props): JSX.Element {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const posts = await fetchPosts();
+  const posts = await fetchPostInfo();
   return {
     props: {
       posts: posts.map((post) => ({
