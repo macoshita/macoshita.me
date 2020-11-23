@@ -58,8 +58,8 @@ This cache has no CORS headers. :cry:
 
 ### Success
 
-![success](/blog-img/2018-04-17-1.png)
+![success](/images/2018-04-17-1.png)
 
 ### Fail
 
-![fail](/blog-img/2018-04-17-2.png)
+![fail](/images/2018-04-17-2.png)

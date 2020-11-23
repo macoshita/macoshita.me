@@ -41,7 +41,7 @@ It's very easy. Maybe you can do it with only smartphone! :thumbsup:
 
 I achieved the original goals that automatic deployment.
 
-![audits](/blog-img/2018-04-18-audits.png)
+![audits](/images/2018-04-18-audits.png)
 
 Audits score is no change to compare with GitHub Pages.
 (It's natural that this blog is very few CSS :stuck_out_tongue_closed_eyes: )
