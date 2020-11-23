@@ -13,7 +13,6 @@ export type EsaFrontmatter = {
   readonly created_at: string; // esa の形式は 2020-10-30 11:06:34 +0900
   readonly updated_at: string;
   readonly published: boolean;
-  readonly number: number;
 };
 
 export type PostInfo = {
@@ -23,7 +22,6 @@ export type PostInfo = {
   readonly tags: string[];
   readonly createdAt: string;
   readonly updatedAt: string;
-  readonly id: number;
 };
 
 export type PostContent = {
@@ -57,7 +55,6 @@ export async function fetchPostInfo(): Promise<PostInfo[]> {
         tags: frontmatter.tags?.split(",")?.map((t) => t.trim()) ?? [],
         createdAt: new Date(frontmatter.created_at).toISOString(),
         updatedAt: new Date(frontmatter.updated_at).toISOString(),
-        id: frontmatter.number,
       };
     });
 
