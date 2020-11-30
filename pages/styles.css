@@ -1,39 +1,65 @@
-@import url(sanitize.css);
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-primary: theme("colors.lime.600");
+    --color-primary-variant: theme("colors.lime.900");
+    --color-secondary: theme("colors.emerald.500");
+    --color-secondary-variant: theme("colors.emerald.900");
+    --color-background: theme("colors.warmGray.100");
+    --color-surface: theme("colors.warmGray.200");
+    --color-on-primary: theme("colors.warmGray.50");
+    --color-on-secondary: theme("colors.warmGray.50");
+    --color-on-background: theme("colors.warmGray.900");
+    --color-on-surface: theme("colors.warmGray.900");
+  }
+}
 
-:root {
-  --rich-black-fogra-29: #0d1b2aff;
-  --oxford-blue: #1b263bff;
-  --bdazzled-blue: #415a77ff;
-  --shadow-blue: #778da9ff;
-  --platinum: #e0e1ddff;
-
-  --color-background: var(--platinum);
-  --color-text: var(--rich-black-fogra-29);
-  --color-sub-text: var(--bdazzled-blue);
-  --color-link: var(--bdazzled-blue);
-  --color-title: var(--rich-black-fogra-29);
-
-  --width-main: 800px;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: theme("colors.lime.400");
+    --color-primary-variant: theme("colors.lime.200");
+    --color-secondary: theme("colors.emerald.500");
+    --color-secondary-variant: theme("colors.emerald.200");
+    --color-background: theme("colors.warmGray.900");
+    --color-surface: theme("colors.warmGray.800");
+    --color-on-primary: theme("colors.warmGray.900");
+    --color-on-secondary: theme("colors.warmGray.900");
+    --color-on-background: theme("colors.warmGray.100");
+    --color-on-surface: theme("colors.warmGray.100");
+  }
 }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  color: var(--color-text);
+  color: var(--color-on-background);
   background-color: var(--color-background);
-  box-sizing: border-box;
 }
 
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
+.post-body {
+  & h2 {
+    @apply text-primary font-bold text-2xl my-4;
+  }
+  & h3 {
+    @apply text-primary-variant font-bold text-xl my-4;
+  }
+  & h4,
+  h5,
+  h6 {
+    @apply text-on-surface font-bold text-lg my-4;
+  }
+  & p {
+    @apply my-2;
+  }
+  & ul {
+    @apply list-disc ml-8 my-2;
+  }
+  & code {
+    @apply bg-surface rounded text-on-surface px-1;
+  }
+  & pre {
+    @apply overflow-auto p-4 rounded;
+  }
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

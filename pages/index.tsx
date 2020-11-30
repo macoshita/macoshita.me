@@ -13,37 +13,18 @@ type Props = {
 export default function Home({ posts }: Props): JSX.Element {
   return (
     <Layout home>
-      <div className="posts">
+      <div className="max-w-screen-lg mx-auto px-4 grid lg:grid-cols-3 md:grid-cols-2 gap-4">
         {posts.map(({ slug, title, createdAt }, i) => (
-          <div key={i} className="post">
-            <div className="post-date">
-              {format(new Date(createdAt), "yyyy-MM-dd")}
-            </div>
-            <h2 className="post-title">
-              <Link href={`/posts/${slug}`}>
-                <a className="post">{title}</a>
-              </Link>
-            </h2>
-          </div>
+          <Link key={i} href={`/posts/${slug}`}>
+            <a className="block bg-surface text-on-surface p-4 rounded shadow">
+              <div className="text-secondary text-sm">
+                {format(new Date(createdAt), "yyyy-MM-dd")}
+              </div>
+              <h2 className="post-title">{title}</h2>
+            </a>
+          </Link>
         ))}
       </div>
-
-      <style jsx>{`
-        .posts {
-          max-width: var(--width-main);
-          margin: auto;
-        }
-        .post {
-          text-align: center;
-        }
-        .post-date {
-          color: var(--color-sub-text);
-        }
-        .post-title {
-          margin-top: 0;
-          color: var(--color-text);
-        }
-      `}</style>
     </Layout>
   );
 }

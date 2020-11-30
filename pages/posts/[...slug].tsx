@@ -7,35 +7,21 @@ export default function Post({ content, info }: PostContent): JSX.Element {
   const { title, createdAt } = info;
   return (
     <Layout title={title}>
-      <article>
-        <header>
-          <time dateTime={createdAt}>
+      <article className="max-w-screen-lg mx-auto px-8">
+        <header className="text-center mb-8">
+          <time className="text-sm text-secondary" dateTime={createdAt}>
             {format(new Date(createdAt), "yyyy-MM-dd")}
           </time>
           <h1 className="title">{title}</h1>
         </header>
-        <section dangerouslySetInnerHTML={{ __html: content }} />
+        <section
+          className="post-body"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
       </article>
       <style jsx>{`
-        article {
-          max-width: var(--width-main);
-          margin: 0 auto;
-          padding: 0 16px;
-        }
-        header {
-          text-align: center;
-          margin-bottom: 48px;
-        }
         .title {
-          margin-top: 0;
-          color: var(--color-title);
           font-size: min(9vw, 3rem);
-        }
-        section :global(img) {
-          max-width: 100%;
-        }
-        section :global(a) {
-          color: var(--color-link);
         }
       `}</style>
     </Layout>
