@@ -58,7 +58,10 @@ export async function fetchPostInfo(): Promise<PostInfo[]> {
       };
     });
 
-  const posts = await Promise.all(jobs);
+  const now = new Date().getTime();
+  const posts = (await Promise.all(jobs)).filter(
+    ({ createdAt }) => now >= new Date(createdAt).getTime()
+  );
 
   postsCache = posts.sort((a, b) => {
     if (a.createdAt < b.createdAt) {
