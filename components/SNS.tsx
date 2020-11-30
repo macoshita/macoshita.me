@@ -1,12 +1,16 @@
 import { Github, Twitter } from "@icons-pack/react-simple-icons";
 
-function SNS(): JSX.Element {
+type Props = {
+  className?: string;
+};
+
+const SNS: React.FC<Props> = (props) => {
   return (
-    <div className="icons">
-      <a className="icon" href="https://github.com/macoshita">
+    <div className={`flex justify-center space-x-4 ${props.className ?? ""}`}>
+      <a href="https://github.com/macoshita">
         <Github />
       </a>
-      <a className="icon" href="https://twitter.com/macoshita">
+      <a href="https://twitter.com/macoshita">
         <Twitter />
       </a>
       <style jsx>{`
@@ -16,6 +20,6 @@ function SNS(): JSX.Element {
       `}</style>
     </div>
   );
-}
+};
 
 export default SNS;

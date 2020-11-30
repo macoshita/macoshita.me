@@ -16,31 +16,13 @@ function Layout({ home, title, children }: Props): JSX.Element {
         <title>{title ? `${title} - ` : ""}@macoshita</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="container">
-        {home ? <HomeHeader /> : <PageHeader />}
-        <main>{children}</main>
-        <footer>
+      <div className="min-h-screen flex flex-col space-y-4">
+        {home ? <HomeHeader className="my-24" /> : <PageHeader />}
+        <main className="flex-grow">{children}</main>
+        <footer className="text-center">
           {home ? null : <SNS />}
-          <div className="copyright">©2020</div>
+          <div className="my-4">©2020</div>
         </footer>
-        <style jsx>{`
-          .container {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-          }
-          main {
-            flex: 1;
-          }
-          footer {
-            margin: 32px auto;
-            text-align: center;
-          }
-          .copyright {
-            margin-top: 16px;
-            color: var(--color-sub-text);
-          }
-        `}</style>
       </div>
     </>
   );
