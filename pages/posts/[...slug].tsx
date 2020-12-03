@@ -4,13 +4,13 @@ import { format } from "date-fns";
 import { GetStaticPaths, GetStaticProps } from "next";
 
 export default function Post({ content, info }: PostContent): JSX.Element {
-  const { title, createdAt } = info;
+  const { title, publishedAt } = info;
   return (
     <Layout title={title}>
       <article className="max-w-screen-lg mx-auto px-8">
         <header className="text-center mb-8">
-          <time className="text-sm text-secondary" dateTime={createdAt}>
-            {format(new Date(createdAt), "yyyy-MM-dd")}
+          <time className="text-sm text-secondary" dateTime={publishedAt}>
+            {format(new Date(publishedAt), "yyyy-MM-dd")}
           </time>
           <h1 className="title">{title}</h1>
         </header>
